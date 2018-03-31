@@ -106,5 +106,30 @@ RSpec.describe ProjectsController, type: :controller do
         expect(@project.reload.name).to eq "New Project Name"
       end
     end
+
+    context "as an unauthorized user" do
+      before do
+        @user = FactoryGirl.create(:user)
+        other_user = FactoryGirl.create(:user)
+        @project = FactoryGirl.create(:project,
+          owner: other_user,
+          name: "Same Old Name"
+        )
+      end
+
+      it "does not update the project" do
+        project_params = FactoryGirl.attributes_for(:project, name: "New Name")
+        sign_in @user
+        patch :update, params: { id: @project.id, project: project_params }
+        expect(@project.reload.name).to eq "Same Old Name"
+      end
+
+      it "redirects to the dashboard" do
+        project_params = FactoryGirl.attributes_for(:project)
+        sign_in @user
+        patch :update, params: { id: @project.id, project: project_params }
+        expect(response).to redirect_to root_path
+      end
+    end
   end
 end
