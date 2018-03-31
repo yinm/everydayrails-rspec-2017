@@ -14,6 +14,12 @@ RSpec.describe Project, type: :model do
     )
   end
 
+  it "is invalid without a name" do
+    project = Project.new(name: nil)
+    project.valid?
+    expect(project.errors[:name]).to include("can't be blank")
+  end
+
   it "does not allow duplicate project names per user" do
     new_project = @user.projects.build(
       name: "Test Project",
