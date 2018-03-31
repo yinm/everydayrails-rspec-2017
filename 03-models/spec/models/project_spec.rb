@@ -2,18 +2,11 @@ require 'rails_helper'
 
 RSpec.describe Project, type: :model do
   it "does not allow duplicate project names per user" do
-    user = User.create(
-      first_name: "Joe",
-      last_name:  "Tester",
-      email:      "joetester@example.com",
-      password:   "dottle-nouveau-pavilion-tights-furze",
-    )
+    project = FactoryGirl.create(:project, name: "Test Project")
+    puts "#{project.owner.inspect}"
 
-    user.projects.create(
-      name: "Test Project",
-    )
-
-    new_project = user.projects.build(
+    # aliasでFactoryを作ったら、aliasでアクセスしないといけない (owner is ok. not user)
+    new_project = project.owner.projects.build(
       name: "Test Project",
     )
 
@@ -22,27 +15,14 @@ RSpec.describe Project, type: :model do
   end
 
   it "allows two users to share a project name" do
-    user = User.create(
-      first_name: "Joe",
-      last_name:  "Tester",
-      email:      "joetester@example.com",
-      password:   "dottle-nouveau-pavilion-tights-furze",
-    )
+    project = FactoryGirl.create(:project, name: "Test Project")
+    other_project = FactoryGirl.create(:project, name: "Test Project")
 
-    user.projects.create(
-      name: "Test Project",
-    )
+    puts "#{project.name}"
+    puts "#{project.owner.inspect}"
 
-    other_user = User.create(
-      first_name: "Jane",
-      last_name:  "Tester",
-      email:      "janetester@example.com",
-      password:   "dottle-nouveau-pavilion-tights-furze",
-    )
-
-    other_project = other_user.projects.build(
-      name: "Test Project",
-    )
+    puts "#{other_project.name}"
+    puts "#{other_project.owner.inspect}"
 
     expect(other_project).to be_valid
   end
