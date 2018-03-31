@@ -70,8 +70,6 @@ RSpec.describe ProjectsController, type: :controller do
 
       it "adds a project" do
         project_params = FactoryGirl.attributes_for(:project)
-        p project_params
-
         sign_in @user
         expect {
           post :create, params: { project: project_params }
@@ -90,6 +88,22 @@ RSpec.describe ProjectsController, type: :controller do
         project_params = FactoryGirl.attributes_for(:project)
         post :create, params: { project: project_params }
         expect(response).to redirect_to "/users/sign_in"
+      end
+    end
+  end
+
+  describe "#update" do
+    context "as an authorized user" do
+      before do
+        @user = FactoryGirl.create(:user)
+        @project = FactoryGirl.create(:project, owner: @user)
+      end
+
+      it "updates a project" do
+        project_params = FactoryGirl.attributes_for(:project, name: "New Project Name")
+        sign_in @user
+        patch :update, params: { id: @project.id, project: project_params }
+        expect(@project.reload.name).to eq "New Project Name"
       end
     end
   end
