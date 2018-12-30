@@ -1,19 +1,36 @@
 require 'rails_helper'
 
 RSpec.describe Project, type: :model do
-  it 'does not allow duplicate project names per user' do
-    user = User.create(
+  before do
+    @user = User.create(
       first_name: 'Joe',
       last_name: 'Tester',
       email: 'joetester@example.com',
       password: 'dottle'
     )
+  end
 
-    user.projects.create(
+  it 'is valid with owner and name' do
+    project = @user.projects.build(
+      name: 'Test Project'
+    )
+    expect(project).to be_valid
+  end
+
+  it 'is invalid without a name' do
+    project = @user.projects.build(
+      name: nil
+    )
+    project.valid?
+    expect(project.errors[:name]).to include("can't be blank")
+  end
+
+  it 'does not allow duplicate project names per user' do
+    @user.projects.create(
       name: 'Test Project'
     )
 
-    new_project = user.projects.build(
+    new_project = @user.projects.build(
       name: 'Test Project'
     )
 
@@ -22,13 +39,7 @@ RSpec.describe Project, type: :model do
   end
 
   it 'allows two users to share a project name' do
-    user = User.create(
-      first_name: 'Joe',
-      last_name: 'Tester',
-      email: 'joetester@example.com',
-      password: 'dottle'
-    )
-    user.projects.create(
+    @user.projects.create(
       name: 'Test Project'
     )
 
