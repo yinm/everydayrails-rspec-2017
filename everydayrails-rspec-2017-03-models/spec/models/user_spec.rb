@@ -44,4 +44,10 @@ RSpec.describe User, type: :model do
     user = FactoryBot.build(:user, first_name: 'John', last_name: 'Doe')
     expect(user.name).to eq "John Doe"
   end
+
+  it 'does something with multiple users' do
+    FactoryBot.create(:user)
+    FactoryBot.create(:user)
+    expect(true).to be_truthy
+  end
 end
