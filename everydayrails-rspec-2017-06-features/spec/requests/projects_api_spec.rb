@@ -63,7 +63,7 @@ RSpec.describe "Project API", type: :request do
 
   it 'delete a project' do
     user = FactoryBot.create(:user)
-    project = FactoryBot.create(:project)
+    project = FactoryBot.create(:project, owner: user)
 
     expect do
       delete api_project_path(project.id), params: {
