@@ -41,4 +41,23 @@ RSpec.describe "Project API", type: :request do
 
     expect(response).to have_http_status(:success)
   end
+
+  it 'updates a project' do
+    user = FactoryBot.create(:user)
+    project = FactoryBot.create(:project, name: 'Sample Project')
+
+    project_attributes = FactoryBot.attributes_for(:project,
+      name: 'Updated Project'
+    )
+
+    patch api_project_path(project.id), params: {
+      user_email: user.email,
+      user_token: user.authentication_token,
+      project: project_attributes
+    }
+
+    expect(response).to have_http_status(:success)
+    json = JSON.parse(response.body)
+    expect(json['name']).to eq 'Updated Project'
+  end
 end
