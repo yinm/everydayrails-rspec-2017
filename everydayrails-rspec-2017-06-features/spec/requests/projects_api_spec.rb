@@ -60,4 +60,18 @@ RSpec.describe "Project API", type: :request do
     json = JSON.parse(response.body)
     expect(json['name']).to eq 'Updated Project'
   end
+
+  it 'delete a project' do
+    user = FactoryBot.create(:user)
+    project = FactoryBot.create(:project)
+
+    expect do
+      delete api_project_path(project.id), params: {
+        user_email: user.email,
+        user_token: user.authentication_token
+      }
+    end.to change(user.projects, :count).by(-1)
+
+    expect(response).to have_http_status(:success)
+  end
 end
