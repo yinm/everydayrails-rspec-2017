@@ -8,7 +8,8 @@ RSpec.feature "Tasks", type: :feature do
       owner: user)
     task = project.tasks.create!(name: "Finish RSpec tutorial")
 
-    sign_in_as user
+    login_as user, scope: :user
+    visit root_path
 
     click_link "RSpec tutorial"
     check "Finish RSpec tutorial"
