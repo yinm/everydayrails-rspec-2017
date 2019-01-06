@@ -39,4 +39,16 @@ RSpec.feature "Projects", type: :feature do
     expect(page).to have_content 'Completed'
     expect(page).to_not have_button 'Complete'
   end
+
+  scenario 'projects are hidden when completed' do
+    user = FactoryBot.create(:user)
+    project = FactoryBot.create(:project, owner: user)
+    completed_project = FactoryBot.create(:project, owner: user, completed: true)
+
+    sign_in user
+    visit projects_path
+
+    expect(page).to have_content project.name
+    expect(page).to_not have_content completed_project.name
+  end
 end

@@ -5,6 +5,8 @@ class Project < ApplicationRecord
   has_many :notes
   has_many :tasks
 
+  scope :not_completed, -> { where(completed: false) }
+
   def late?
     due_on.in_time_zone < Date.current.in_time_zone
   end
